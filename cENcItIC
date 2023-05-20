@@ -1,0 +1,31 @@
+import numpy as np
+from scipy.linalg import hadamard
+
+def quantum_walk(steps):
+    n = steps * 2 + 1  # Número total de posiciones en la línea
+    num_coins = 2  # Número de monedas
+
+    # Operadores de Hadamard para las monedas
+    coin_operator = hadamard(num_coins)
+
+    # Estado inicial
+    initial_state = np.zeros((n, num_coins))
+    initial_state[steps][0] = 1.0  # La partícula comienza en la posición central con una moneda en el estado |0>
+
+    # Matriz de evolución cuántica
+    evolution_matrix = np.kron(coin_operator, np.eye(n))
+
+    # Aplicar la caminata cuántica
+    final_state = np.linalg.matrix_power(evolution_matrix, steps).dot(initial_state)
+
+    return final_state
+
+# Ejemplo de uso
+steps = 5
+final_state = quantum_walk(steps)
+
+# Imprimir las probabilidades de cada posición
+for i in range(len(final_state)):
+    position = i - steps
+    probability = np.abs(final_state[i][0])**2 + np.abs(final_state[i][1])**2
+    print(f"Posición {position}: {probability}")
